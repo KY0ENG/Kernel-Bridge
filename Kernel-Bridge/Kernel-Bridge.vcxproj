@@ -22,14 +22,17 @@
     <ClCompile Include="API\CommPort.cpp" />
     <ClCompile Include="API\CppSupport.cpp" />
     <ClCompile Include="API\CPU.cpp" />
+    <ClCompile Include="API\Hypervisor.cpp" />
     <ClCompile Include="API\Importer.cpp" />
     <ClCompile Include="API\IO.cpp" />
     <ClCompile Include="API\KernelShells.cpp" />
     <ClCompile Include="API\MemoryUtils.cpp" />
     <ClCompile Include="API\ObCallbacks.cpp" />
     <ClCompile Include="API\OSVersion.cpp" />
+    <ClCompile Include="API\PCI.cpp" />
     <ClCompile Include="API\ProcessesUtils.cpp" />
     <ClCompile Include="API\PsCallbacks.cpp" />
+    <ClCompile Include="API\PteUtils.cpp" />
     <ClCompile Include="API\SectionsUtils.cpp" />
     <ClCompile Include="API\Signatures.cpp" />
     <ClCompile Include="Kernel-Bridge\DriverEvents.cpp" />
@@ -48,6 +51,7 @@
     <Configuration>Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
     <RootNamespace>Kernel_Bridge</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -57,6 +61,7 @@
     <ConfigurationType>Driver</ConfigurationType>
     <DriverType>WDM</DriverType>
     <DriverTargetPlatform>Desktop</DriverTargetPlatform>
+    <_NT_TARGET_VERSION>0x0601</_NT_TARGET_VERSION>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <TargetVersion>Windows7</TargetVersion>
@@ -65,6 +70,7 @@
     <ConfigurationType>Driver</ConfigurationType>
     <DriverType>WDM</DriverType>
     <DriverTargetPlatform>Desktop</DriverTargetPlatform>
+    <_NT_TARGET_VERSION>0x0601</_NT_TARGET_VERSION>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <TargetVersion>Windows7</TargetVersion>
@@ -73,6 +79,7 @@
     <ConfigurationType>Driver</ConfigurationType>
     <DriverType>WDM</DriverType>
     <DriverTargetPlatform>Desktop</DriverTargetPlatform>
+    <_NT_TARGET_VERSION>0x0601</_NT_TARGET_VERSION>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <TargetVersion>Windows7</TargetVersion>
@@ -81,6 +88,7 @@
     <ConfigurationType>Driver</ConfigurationType>
     <DriverType>WDM</DriverType>
     <DriverTargetPlatform>Desktop</DriverTargetPlatform>
+    <_NT_TARGET_VERSION>0x0601</_NT_TARGET_VERSION>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings" />
@@ -94,7 +102,7 @@
     <CodeAnalysisRuleSet>F:\Windows Kits\10\CodeAnalysis\DriverRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <EnableInf2cat>true</EnableInf2cat>
-    <IncludePath>../SharedTypes;$(IncludePath)</IncludePath>
+    <IncludePath>../SharedTypes;../CommonTypes;$(VC_IncludePath);$(IncludePath)</IncludePath>
     <Inf2CatUseLocalTime>true</Inf2CatUseLocalTime>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -102,7 +110,7 @@
     <CodeAnalysisRuleSet>F:\Windows Kits\10\CodeAnalysis\DriverRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <EnableInf2cat>true</EnableInf2cat>
-    <IncludePath>../SharedTypes;$(IncludePath)</IncludePath>
+    <IncludePath>../SharedTypes;../CommonTypes;$(VC_IncludePath);$(IncludePath)</IncludePath>
     <Inf2CatUseLocalTime>true</Inf2CatUseLocalTime>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -110,7 +118,7 @@
     <CodeAnalysisRuleSet>F:\Windows Kits\10\CodeAnalysis\DriverRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <EnableInf2cat>true</EnableInf2cat>
-    <IncludePath>../SharedTypes;$(IncludePath)</IncludePath>
+    <IncludePath>../SharedTypes;../CommonTypes;$(VC_IncludePath);$(IncludePath)</IncludePath>
     <Inf2CatUseLocalTime>true</Inf2CatUseLocalTime>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -118,7 +126,7 @@
     <CodeAnalysisRuleSet>F:\Windows Kits\10\CodeAnalysis\DriverRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <EnableInf2cat>true</EnableInf2cat>
-    <IncludePath>../SharedTypes;$(IncludePath)</IncludePath>
+    <IncludePath>../SharedTypes;../CommonTypes;$(VC_IncludePath);$(IncludePath)</IncludePath>
     <Inf2CatUseLocalTime>true</Inf2CatUseLocalTime>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -201,12 +209,17 @@
     <FilesToPackage Include="$(TargetPath)" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\CommonTypes\DescriptorTables.h" />
+    <ClInclude Include="..\CommonTypes\PTE.h" />
+    <ClInclude Include="..\CommonTypes\SVM.h" />
+    <ClInclude Include="..\CommonTypes\VMX.h" />
     <ClInclude Include="..\SharedTypes\CtlTypes.h" />
     <ClInclude Include="..\SharedTypes\FltTypes.h" />
     <ClInclude Include="..\SharedTypes\WdkTypes.h" />
     <ClInclude Include="API\CommPort.h" />
     <ClInclude Include="API\CppSupport.h" />
     <ClInclude Include="API\CPU.h" />
+    <ClInclude Include="API\Hypervisor.h" />
     <ClInclude Include="API\Importer.h" />
     <ClInclude Include="API\IO.h" />
     <ClInclude Include="API\KernelShells.h" />
@@ -215,8 +228,10 @@
     <ClInclude Include="API\MemoryUtils.h" />
     <ClInclude Include="API\ObCallbacks.h" />
     <ClInclude Include="API\OSVersion.h" />
+    <ClInclude Include="API\PCI.h" />
     <ClInclude Include="API\ProcessesUtils.h" />
     <ClInclude Include="API\PsCallbacks.h" />
+    <ClInclude Include="API\PteUtils.h" />
     <ClInclude Include="API\RAII.h" />
     <ClInclude Include="API\SectionsUtils.h" />
     <ClInclude Include="API\Signatures.h" />
@@ -229,6 +244,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Exports.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <MASM Include="API\SVM.asm">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </MASM>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

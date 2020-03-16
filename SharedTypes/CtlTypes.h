@@ -1,119 +1,144 @@
 #pragma once
 
+constexpr int KB_API_VERSION = 8;
+
 namespace Ctls {
     enum KbCtlIndices {
+        // Driver management:
+        /* 00 */ KbGetDriverApiVersion,
+        /* 01 */ KbGetHandlesCount,
+
         // Beeper:
-        /* 00 */ KbSetBeeperRegime,
-        /* 01 */ KbStartBeeper,
-        /* 02 */ KbStopBeeper,
-        /* 03 */ KbSetBeeperIn,
-        /* 04 */ KbSetBeeperOut,
-        /* 05 */ KbSetBeeperDivider,
-        /* 06 */ KbSetBeeperFrequency,
+        /* 02 */ KbSetBeeperRegime,
+        /* 03 */ KbStartBeeper,
+        /* 04 */ KbStopBeeper,
+        /* 05 */ KbSetBeeperIn,
+        /* 06 */ KbSetBeeperOut,
+        /* 07 */ KbSetBeeperDivider,
+        /* 08 */ KbSetBeeperFrequency,
 
         // IO-Ports:
-        /* 07 */ KbReadPort,
-        /* 08 */ KbReadPortString,
-        /* 09 */ KbWritePort,
-        /* 10 */ KbWritePortString,
+        /* 09 */ KbReadPort,
+        /* 10 */ KbReadPortString,
+        /* 11 */ KbWritePort,
+        /* 12 */ KbWritePortString,
 
         // Interrupts:
-        /* 11 */ KbCli,
-        /* 12 */ KbSti,
-        /* 13 */ KbHlt,
+        /* 13 */ KbCli,
+        /* 14 */ KbSti,
+        /* 15 */ KbHlt,
 
         // MSR:
-        /* 14 */ KbReadMsr,
-        /* 15 */ KbWriteMsr,
+        /* 16 */ KbReadMsr,
+        /* 17 */ KbWriteMsr,
 
         // CPUID:
-        /* 16 */ KbCpuid,
-        /* 17 */ KbCpuidEx,
+        /* 18 */ KbCpuid,
+        /* 19 */ KbCpuidEx,
 
         // TSC & PMC:
-        /* 18 */ KbReadPmc,
-        /* 19 */ KbReadTsc,
-        /* 20 */ KbReadTscp,
+        /* 20 */ KbReadPmc,
+        /* 21 */ KbReadTsc,
+        /* 22 */ KbReadTscp,
 
         // Memory management:
-        /* 21 */ KbAllocKernelMemory,
-        /* 22 */ KbFreeKernelMemory,
-        /* 23 */ KbAllocNonCachedMemory,
-        /* 24 */ KbFreeNonCachedMemory,
-        /* 25 */ KbCopyMoveMemory,
-        /* 26 */ KbFillMemory,
-        /* 27 */ KbEqualMemory,
+        /* 23 */ KbAllocKernelMemory,
+        /* 24 */ KbFreeKernelMemory,
+        /* 25 */ KbAllocNonCachedMemory,
+        /* 26 */ KbFreeNonCachedMemory,
+        /* 27 */ KbCopyMoveMemory,
+        /* 28 */ KbFillMemory,
+        /* 29 */ KbEqualMemory,
 
         // Memory mappings:
-        /* 28 */ KbAllocateMdl,
-        /* 29 */ KbProbeAndLockPages,
-        /* 30 */ KbMapMdl,
-        /* 31 */ KbProtectMappedMemory,
-        /* 32 */ KbUnmapMdl,
-        /* 33 */ KbUnlockPages,
-        /* 34 */ KbFreeMdl,
-        /* 35 */ KbMapMemory,
-        /* 36 */ KbUnmapMemory,
+        /* 30 */ KbAllocateMdl,
+        /* 31 */ KbProbeAndLockPages,
+        /* 32 */ KbMapMdl,
+        /* 33 */ KbProtectMappedMemory,
+        /* 34 */ KbUnmapMdl,
+        /* 35 */ KbUnlockPages,
+        /* 36 */ KbFreeMdl,
+        /* 37 */ KbMapMemory,
+        /* 38 */ KbUnmapMemory,
 
         // Physical memory:
-        /* 37 */ KbAllocPhysicalMemory,
-        /* 38 */ KbFreePhysicalMemory,
-        /* 39 */ KbMapPhysicalMemory,
-        /* 40 */ KbUnmapPhysicalMemory,
-        /* 41 */ KbGetPhysicalAddress,
-        /* 42 */ KbGetVirtualForPhysical,
-        /* 43 */ KbReadPhysicalMemory,
-        /* 44 */ KbWritePhysicalMemory,
-        /* 45 */ KbReadDmiMemory,
+        /* 39 */ KbAllocPhysicalMemory,
+        /* 40 */ KbFreePhysicalMemory,
+        /* 41 */ KbMapPhysicalMemory,
+        /* 42 */ KbUnmapPhysicalMemory,
+        /* 43 */ KbGetPhysicalAddress,
+        /* 44 */ KbGetVirtualForPhysical,
+        /* 45 */ KbReadPhysicalMemory,
+        /* 46 */ KbWritePhysicalMemory,
+        /* 47 */ KbReadDmiMemory,
 
         // Processes & Threads:
-        /* 46 */ KbGetEprocess,
-        /* 47 */ KbGetEthread,
-        /* 48 */ KbOpenProcess,
-        /* 49 */ KbOpenProcessByPointer,
-        /* 50 */ KbOpenThread,
-        /* 51 */ KbOpenThreadByPointer,
-        /* 52 */ KbDereferenceObject,
-        /* 53 */ KbCloseHandle,
-        /* 54 */ KbAllocUserMemory,
-        /* 55 */ KbFreeUserMemory,
-        /* 56 */ KbSecureVirtualMemory,
-        /* 57 */ KbUnsecureVirtualMemory,
-        /* 58 */ KbReadProcessMemory,
-        /* 59 */ KbWriteProcessMemory,
-        /* 60 */ KbSuspendProcess,
-        /* 61 */ KbResumeProcess,
-        /* 62 */ KbGetThreadContext,
-        /* 63 */ KbSetThreadContext,
-        /* 64 */ KbCreateUserThread,
-        /* 65 */ KbCreateSystemThread,
-        /* 66 */ KbQueueUserApc,
-        /* 67 */ KbRaiseIopl,
-        /* 68 */ KbResetIopl,
-        /* 69 */ KbGetProcessCr3Cr4,
+        /* 48 */ KbGetEprocess,
+        /* 49 */ KbGetEthread,
+        /* 50 */ KbOpenProcess,
+        /* 51 */ KbOpenProcessByPointer,
+        /* 52 */ KbOpenThread,
+        /* 53 */ KbOpenThreadByPointer,
+        /* 54 */ KbDereferenceObject,
+        /* 55 */ KbCloseHandle,
+        /* 56 */ KbQueryInformationProcess,
+        /* 57 */ KbSetInformationProcess,
+        /* 58 */ KbQueryInformationThread,
+        /* 59 */ KbSetInformationThread,
+        /* 60 */ KbAllocUserMemory,
+        /* 61 */ KbFreeUserMemory,
+        /* 62 */ KbSecureVirtualMemory,
+        /* 63 */ KbUnsecureVirtualMemory,
+        /* 64 */ KbReadProcessMemory,
+        /* 65 */ KbWriteProcessMemory,
+        /* 66 */ KbSuspendProcess,
+        /* 67 */ KbResumeProcess,
+        /* 68 */ KbGetThreadContext,
+        /* 69 */ KbSetThreadContext,
+        /* 70 */ KbCreateUserThread,
+        /* 71 */ KbCreateSystemThread,
+        /* 72 */ KbQueueUserApc,
+        /* 73 */ KbRaiseIopl,
+        /* 74 */ KbResetIopl,
+        /* 75 */ KbGetProcessCr3Cr4,
 
         // Sections:
-        /* 70 */ KbCreateSection,
-        /* 71 */ KbOpenSection,
-        /* 72 */ KbMapViewOfSection,
-        /* 73 */ KbUnmapViewOfSection,
+        /* 76 */ KbCreateSection,
+        /* 77 */ KbOpenSection,
+        /* 78 */ KbMapViewOfSection,
+        /* 79 */ KbUnmapViewOfSection,
 
         // Loadable modules:
-        /* 74 */ KbCreateDriver,
-        /* 75 */ KbLoadModule,
-        /* 76 */ KbGetModuleHandle,
-        /* 77 */ KbCallModule,
-        /* 78 */ KbUnloadModule,
+        /* 80 */ KbCreateDriver,
+        /* 81 */ KbLoadModule,
+        /* 82 */ KbGetModuleHandle,
+        /* 83 */ KbCallModule,
+        /* 84 */ KbUnloadModule,
+        
+        // PCI:
+        /* 85 */ KbReadPciConfig,
+        /* 86 */ KbWritePciConfig,
+
+        // Hypervisor:
+        /* 87 */ KbVmmEnable,
+        /* 88 */ KbVmmDisable,
 
         // Stuff u kn0w:
-        /* 79 */ KbExecuteShellCode,
-        /* 80 */ KbGetKernelProcAddress,
-        /* 81 */ KbStallExecutionProcessor,
-        /* 82 */ KbBugCheck,
-        /* 83 */ KbFindSignature
+        /* 89 */ KbExecuteShellCode,
+        /* 90 */ KbGetKernelProcAddress,
+        /* 91 */ KbStallExecutionProcessor,
+        /* 92 */ KbBugCheck,
+        /* 93 */ KbFindSignature
     };
 }
 
+DECLARE_STRUCT(KB_GET_DRIVER_API_VERSION_OUT, {
+    ULONG Version;
+});
+
+DECLARE_STRUCT(KB_GET_HANDLES_COUNT_OUT, {
+    ULONG HandlesCount;
+});
 
 DECLARE_STRUCT(KB_SET_BEEPER_DIVIDER_IN, { 
     USHORT Divider; 
@@ -286,8 +311,8 @@ DECLARE_STRUCT(KB_MAP_MDL_IN, {
     OPTIONAL UINT64 SrcProcessId;
     OPTIONAL UINT64 DestProcessId;
     WdkTypes::PMDL Mdl;
-    BOOLEAN NeedLock;
-    WdkTypes::KPROCESSOR_MODE AccessMode;
+    BOOLEAN NeedProbeAndLock;
+    WdkTypes::KPROCESSOR_MODE MapToAddressSpace;
     ULONG Protect;
     WdkTypes::MEMORY_CACHING_TYPE CacheType;
     OPTIONAL WdkTypes::PVOID UserRequestedAddress;
@@ -302,7 +327,7 @@ DECLARE_STRUCT(KB_MAP_MEMORY_IN, {
     OPTIONAL UINT64 DestProcessId;
     WdkTypes::PVOID VirtualAddress;
     ULONG Size;
-    WdkTypes::KPROCESSOR_MODE AccessMode;
+    WdkTypes::KPROCESSOR_MODE MapToAddressSpace;
     ULONG Protect;
     WdkTypes::MEMORY_CACHING_TYPE CacheType;
     OPTIONAL WdkTypes::PVOID UserRequestedAddress;
@@ -456,6 +481,21 @@ DECLARE_STRUCT(KB_CLOSE_HANDLE_IN, {
     WdkTypes::HANDLE Handle;
 });
 
+DECLARE_STRUCT(KB_QUERY_INFORMATION_PROCESS_THREAD_IN, {
+    WdkTypes::HANDLE Handle;
+    WdkTypes::PVOID Buffer;
+    WdkTypes::PULONG ReturnLength;
+    ULONG InfoClass;
+    ULONG Size;
+});
+
+DECLARE_STRUCT(KB_SET_INFORMATION_PROCESS_THREAD_IN, {
+    WdkTypes::HANDLE Handle;
+    WdkTypes::PVOID Buffer;
+    ULONG InfoClass;
+    ULONG Size;
+});
+
 DECLARE_STRUCT(KB_ALLOC_USER_MEMORY_IN, {
     UINT64 ProcessId;
     ULONG Size;
@@ -487,11 +527,19 @@ DECLARE_STRUCT(KB_UNSECURE_VIRTUAL_MEMORY_IN, {
     ULONG ProcessId;
 });
 
-DECLARE_STRUCT(KB_READ_WRITE_PROCESS_MEMORY_IN, {
+DECLARE_STRUCT(KB_READ_PROCESS_MEMORY_IN, {
     UINT64 ProcessId;
     WdkTypes::PVOID BaseAddress;
     WdkTypes::PVOID Buffer;
     ULONG Size;
+});
+
+DECLARE_STRUCT(KB_WRITE_PROCESS_MEMORY_IN, {
+    UINT64 ProcessId;
+    WdkTypes::PVOID BaseAddress;
+    WdkTypes::PVOID Buffer;
+    ULONG Size;
+    BOOLEAN PerformCopyOnWrite;
 });
 
 DECLARE_STRUCT(KB_SUSPEND_RESUME_PROCESS_IN, {
@@ -584,6 +632,17 @@ DECLARE_STRUCT(KB_UNMAP_VIEW_OF_SECTION_IN, {
 DECLARE_STRUCT(KB_EXECUTE_SHELL_CODE_IN, {
     WdkTypes::PVOID Address;
     WdkTypes::PVOID Argument;
+});
+
+DECLARE_STRUCT(KB_READ_WRITE_PCI_CONFIG_IN, {
+    ULONG PciAddress;
+    ULONG PciOffset;
+    WdkTypes::PVOID Buffer;
+    ULONG Size;
+});
+
+DECLARE_STRUCT(KB_READ_WRITE_PCI_CONFIG_OUT, {
+    ULONG ReadOrWritten;
 });
 
 DECLARE_STRUCT(KB_EXECUTE_SHELL_CODE_OUT, {

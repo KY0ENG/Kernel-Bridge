@@ -1,6 +1,9 @@
 #include <fltKernel.h>
 
 #include "FilterCallbacks.h"
+#include "../API/Hypervisor.h"
+
+volatile LONG KbHandlesCount = 0;
 
 VOID OnDriverLoad(
     PDRIVER_OBJECT DriverObject, 
@@ -8,16 +11,21 @@ VOID OnDriverLoad(
     PFLT_FILTER FilterHandle,
     PUNICODE_STRING RegistryPath
 ) {
+    NTSTATUS Status = STATUS_UNSUCCESSFUL;
     UNREFERENCED_PARAMETER(DriverObject);
     UNREFERENCED_PARAMETER(DeviceObject);
     UNREFERENCED_PARAMETER(RegistryPath);
 
     if (FilterHandle) {
         Communication::StartServer(FilterHandle);
-        KdPrint(("[Kernel-Bridge]: ObHandlesFilter status: 0x%X\r\n", KbCallbacks::StartObHandlesFilter()));
-        KdPrint(("[Kernel-Bridge]: PsProcessFilter status: 0x%X\r\n", KbCallbacks::StartPsProcessFilter()));
-        KdPrint(("[Kernel-Bridge]: PsThreadFilter status: 0x%X\r\n", KbCallbacks::StartPsThreadFilter()));
-        KdPrint(("[Kernel-Bridge]: PsImageFilter status: 0x%X\r\n", KbCallbacks::StartPsImageFilter()));
+        Status = KbCallbacks::StartObHandlesFilter();
+        KdPrint(("[Kernel-Bridge]: ObHandlesFilter status: 0x%X\r\n", Status));
+        Status = KbCallbacks::StartPsProcessFilter();
+        KdPrint(("[Kernel-Bridge]: PsProcessFilter status: 0x%X\r\n", Status));
+        Status = KbCallbacks::StartPsThreadFilter();
+        KdPrint(("[Kernel-Bridge]: PsThreadFilter status: 0x%X\r\n", Status));
+        Status = KbCallbacks::StartPsImageFilter();
+        KdPrint(("[Kernel-Bridge]: PsImageFilter status: 0x%X\r\n", Status));
     }
 }
 
@@ -27,6 +35,7 @@ VOID OnDriverUnload(
 ) {
     UNREFERENCED_PARAMETER(DriverObject);
     UNREFERENCED_PARAMETER(DeviceObject);
+    Hypervisor::Devirtualize(); // Devirtualize processor if it is in virtualized state
 }
 
 VOID OnFilterUnload(
@@ -56,6 +65,7 @@ VOID OnDriverCreate(
     UNREFERENCED_PARAMETER(FilterHandle);
     UNREFERENCED_PARAMETER(Irp);
     UNREFERENCED_PARAMETER(IrpStack);
+    InterlockedIncrement(&KbHandlesCount);
 }
 
 VOID OnDriverCleanup(
@@ -80,4 +90,28 @@ VOID OnDriverClose(
     UNREFERENCED_PARAMETER(FilterHandle);
     UNREFERENCED_PARAMETER(Irp);
     UNREFERENCED_PARAMETER(IrpStack);
+    InterlockedDecrement(&KbHandlesCount);
+}
+
+namespace HypervisorManagement {
+    static bool NeedToRevirtualizeOnWake = false;
+}
+
+VOID OnSystemSleep()
+{
+    using namespace HypervisorManagement;
+    if (Hypervisor::IsVirtualized()) {
+        NeedToRevirtualizeOnWake = true;
+        Hypervisor::Devirtualize();
+    }
+    else {
+        NeedToRevirtualizeOnWake = false;
+    }
+}
+
+VOID OnSystemWake()
+{
+    using namespace HypervisorManagement;
+    if (NeedToRevirtualizeOnWake)
+        Hypervisor::Virtualize();
 }
